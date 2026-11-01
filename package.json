@@ -1,0 +1,29 @@
+{
+  "name": "student-portal",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace=frontend\" \"npm run dev --workspace=backend\"",
+    "setup": "npm install && npm run prisma:migrate && npm run prisma:seed",
+    "prisma:migrate": "npm run prisma:migrate --workspace=backend",
+    "prisma:seed": "npm run prisma:seed --workspace=backend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "prisma": "^5.13.0"
+  },
+  "allowScripts": {
+    "@prisma/client@5.22.0": true,
+    "bcrypt@5.1.1": true,
+    "unrs-resolver@1.12.2": true,
+    "prisma@5.13.0": true,
+    "@prisma/engines@5.13.0": true
+  },
+  "dependencies": {
+    "lowdb": "^7.0.1"
+  }
+}

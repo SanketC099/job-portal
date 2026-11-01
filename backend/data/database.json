@@ -1,0 +1,185 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@portal.com",
+      "password": "$2b$10$qpVX3o3B4wAuYmxabdAzu./DtwVzKHczkomPtNVVBANrZsW6d2ZoS",
+      "role": "ADMIN",
+      "createdAt": "2026-10-31T18:30:38.436Z",
+      "updatedAt": "2026-10-31T18:30:38.436Z"
+    },
+    {
+      "id": 2,
+      "email": "hr@techcorp.com",
+      "password": "$2b$10$qpVX3o3B4wAuYmxabdAzu./DtwVzKHczkomPtNVVBANrZsW6d2ZoS",
+      "role": "COMPANY",
+      "createdAt": "2026-10-31T18:30:38.436Z",
+      "updatedAt": "2026-10-31T18:30:38.436Z"
+    },
+    {
+      "id": 3,
+      "email": "careers@innovatestudio.io",
+      "password": "$2b$10$qpVX3o3B4wAuYmxabdAzu./DtwVzKHczkomPtNVVBANrZsW6d2ZoS",
+      "role": "COMPANY",
+      "createdAt": "2026-10-31T18:30:38.436Z",
+      "updatedAt": "2026-10-31T18:30:38.436Z"
+    },
+    {
+      "id": 4,
+      "email": "alex@student.edu",
+      "password": "$2b$10$qpVX3o3B4wAuYmxabdAzu./DtwVzKHczkomPtNVVBANrZsW6d2ZoS",
+      "role": "STUDENT",
+      "createdAt": "2026-10-31T18:30:38.436Z",
+      "updatedAt": "2026-10-31T18:30:38.436Z"
+    },
+    {
+      "id": 5,
+      "email": "sanketchaudhari1234@gmail.com",
+      "password": "$2b$10$zyrqI0g5g7ikFI4RRieUwejyANvr9KGK2InFEjXJwuZL/wbQ.zEEy",
+      "role": "STUDENT",
+      "createdAt": "2026-10-31T19:01:55.870Z",
+      "updatedAt": "2026-10-31T19:01:55.870Z"
+    },
+    {
+      "id": 6,
+      "email": "Acme1234@gmail.com",
+      "password": "$2b$10$1ybBUrdn81CxEmxmAp9zSO2gSDWLCftbOmL1tfQUbsh8T0jCANpwC",
+      "role": "COMPANY",
+      "createdAt": "2026-10-31T19:47:20.763Z",
+      "updatedAt": "2026-10-31T19:47:20.763Z"
+    },
+    {
+      "id": 7,
+      "email": "Sanket1234@gmail.com",
+      "password": "$2b$10$FDEK.u/D14l6/EbyU3sIj.sQwxMPXJDfysSyoKUmLmjEv3SBkGoVe",
+      "role": "STUDENT",
+      "createdAt": "2026-10-31T19:50:24.544Z",
+      "updatedAt": "2026-10-31T19:50:24.544Z"
+    }
+  ],
+  "students": [
+    {
+      "id": 1,
+      "userId": 4,
+      "name": "Alex Johnson",
+      "bio": "Computer Science sophomore passionate about React, TypeScript, and Full-Stack apps.",
+      "skills": [
+        "React",
+        "TypeScript",
+        "Next.js",
+        "Node.js",
+        "Tailwind CSS"
+      ],
+      "resumePath": null
+    },
+    {
+      "id": 2,
+      "userId": 5,
+      "name": "Sanket Chaudhari",
+      "bio": "Enthusiastic full-stack software engineer with expertise in modern web frameworks, REST APIs, and database architecture.",
+      "skills": [
+        "React",
+        "Node.js",
+        "Express",
+        "TypeScript",
+        "PostgreSQL",
+        "Tailwind CSS"
+      ],
+      "resumePath": null
+    },
+    {
+      "id": 3,
+      "userId": 7,
+      "name": "Sanket",
+      "bio": null,
+      "skills": [
+        "React",
+        "JavaScript",
+        "Problem Solving"
+      ],
+      "resumePath": null
+    }
+  ],
+  "companies": [
+    {
+      "id": 1,
+      "userId": 2,
+      "name": "TechCorp Solutions",
+      "description": "Leading global cloud intelligence & web applications firm.",
+      "website": "https://techcorp-demo.com"
+    },
+    {
+      "id": 2,
+      "userId": 3,
+      "name": "Innovate Design Studio",
+      "description": "A modern design agency building delightful digital products.",
+      "website": "https://innovatestudio.io"
+    },
+    {
+      "id": 3,
+      "userId": 6,
+      "name": "Acme",
+      "description": null,
+      "website": null
+    }
+  ],
+  "jobs": [
+    {
+      "id": 1,
+      "companyId": 1,
+      "title": "Frontend Engineering Intern",
+      "description": "Join our UI/UX and web team to build reactive user dashboards using React and Next.js. Mentorship and real project shipping guaranteed!",
+      "location": "Remote / Hybrid",
+      "type": "INTERNSHIP",
+      "postedAt": "2026-10-29T18:30:38.436Z"
+    },
+    {
+      "id": 2,
+      "companyId": 1,
+      "title": "Junior Backend Developer",
+      "description": "Work with Node.js, Express, REST APIs, and modern databases. Strong foundation in asynchronous JavaScript and basic data structures preferred.",
+      "location": "New York, NY",
+      "type": "FULL_TIME",
+      "postedAt": "2026-10-30T18:30:38.436Z"
+    },
+    {
+      "id": 3,
+      "companyId": 2,
+      "title": "UI/UX Design Intern",
+      "description": "Looking for a creative student who loves Figma, user research, and prototyping modern web interfaces.",
+      "location": "Remote",
+      "type": "INTERNSHIP",
+      "postedAt": "2026-10-31T18:30:38.436Z"
+    }
+  ],
+  "applications": [
+    {
+      "id": 1,
+      "studentId": 1,
+      "jobId": 1,
+      "status": "ACCEPTED",
+      "appliedAt": "2026-10-31T18:30:38.436Z"
+    },
+    {
+      "id": 2,
+      "studentId": 2,
+      "jobId": 3,
+      "status": "APPLIED",
+      "appliedAt": "2026-10-31T19:03:25.643Z"
+    },
+    {
+      "id": 3,
+      "studentId": 2,
+      "jobId": 1,
+      "status": "APPLIED",
+      "appliedAt": "2026-10-31T19:15:00.000Z"
+    }
+  ],
+  "nextIds": {
+    "users": 8,
+    "students": 4,
+    "companies": 4,
+    "jobs": 4,
+    "applications": 4
+  }
+}

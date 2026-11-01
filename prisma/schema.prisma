@@ -1,0 +1,64 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  role      String   @default("STUDENT")
+  student   Student?
+  company   Company?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Student {
+  id           Int           @id @default(autoincrement())
+  userId       Int           @unique
+  name         String
+  bio          String?
+  resumePath   String?
+  applications Application[]
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Company {
+  id          Int     @id @default(autoincrement())
+  userId      Int     @unique
+  name        String
+  description String?
+  website     String?
+  jobs        Job[]
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Job {
+  id           Int           @id @default(autoincrement())
+  companyId    Int
+  title        String
+  description  String
+  location     String?
+  type         String        @default("INTERNSHIP")
+  postedAt     DateTime      @default(now())
+  applications Application[]
+  company      Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+}
+
+model Application {
+  id        Int      @id @default(autoincrement())
+  studentId Int
+  jobId     Int
+  status    String   @default("APPLIED")
+  appliedAt DateTime @default(now())
+
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, jobId])
+}
