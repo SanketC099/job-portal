@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import api from "@/lib/api";
+import { downloadResume } from "@/lib/resume";
 
 // ============================================================================
 // STUDENT DASHBOARD
@@ -158,15 +159,13 @@ function StudentDashboard() {
             )}
           </div>
           {profile?.id && (
-            <a
-              href={`/api/students/${profile.id}/resume`}
-              download
-              target="_blank"
-              rel="noreferrer"
+            <button
+              type="button"
+              onClick={() => downloadResume(profile.id)}
               className="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-50 hover:bg-gray-100 text-gray-700 border border-gray-300 rounded-lg text-sm font-semibold transition"
             >
               <span>📄</span> Download My Resume
-            </a>
+            </button>
           )}
         </div>
       </div>
@@ -584,15 +583,13 @@ function CompanyDashboard() {
                       {/* Right: Resume Download & Accept/Reject Actions */}
                       <div className="flex flex-col sm:flex-row lg:flex-col items-end gap-3 pt-4 lg:pt-0 border-t lg:border-t-0 border-gray-100">
                         {/* Resume Download */}
-                        <a
-                          href={`/api/students/${app.student.id}/resume`}
-                          download
-                          target="_blank"
-                          rel="noreferrer"
+                        <button
+                          type="button"
+                          onClick={() => downloadResume(app.student.id)}
                           className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 text-gray-700 text-sm font-semibold rounded-lg border border-gray-300 transition w-full sm:w-auto shadow-sm"
                         >
                           <span>📄</span> Download Resume
-                        </a>
+                        </button>
 
                         {/* Accept & Reject Buttons */}
                         <div className="flex items-center gap-2 w-full sm:w-auto">

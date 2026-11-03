@@ -1,10 +1,10 @@
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
-}
-
 generator client {
   provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -23,7 +23,9 @@ model Student {
   userId       Int           @unique
   name         String
   bio          String?
+  skills       String[]      @default([])
   resumePath   String?
+  resumeKey    String?
   applications Application[]
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -56,7 +58,6 @@ model Application {
   jobId     Int
   status    String   @default("APPLIED")
   appliedAt DateTime @default(now())
-
   student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
 

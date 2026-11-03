@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import api from "@/lib/api";
+import { downloadResume } from "@/lib/resume";
 
 interface StudentInfo {
   id: number;
@@ -338,15 +339,13 @@ export default function JobApplicantsPage() {
                   {/* Right Column: Resume & Actions */}
                   <div className="flex flex-col sm:flex-row lg:flex-col items-end gap-3 pt-3 lg:pt-0 border-t lg:border-t-0 border-gray-100">
                     {/* Resume Download Button */}
-                    <a
-                      href={`/api/students/${app.student.id}/resume`}
-                      download
-                      target="_blank"
-                      rel="noreferrer"
+                    <button
+                      type="button"
+                      onClick={() => downloadResume(app.student.id)}
                       className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 text-gray-700 text-sm font-semibold rounded-lg border border-gray-300 transition w-full sm:w-auto"
                     >
                       <span>📄</span> Download Resume
-                    </a>
+                    </button>
 
                     {/* Action Buttons: Accept / Reject */}
                     <div className="flex items-center gap-2 w-full sm:w-auto">

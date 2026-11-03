@@ -1,123 +1,75 @@
-import bcrypt from 'bcrypt';
-import { dbInstance } from './prisma';
+import bcrypt from "bcrypt";
+import prisma from "./prisma";
 
+/** Explicit demo-data seed for development only; never runs on server startup. */
 export async function seedDemoData() {
-  const data = dbInstance.getData();
-  if (data.users.length > 0) return; // already seeded
+  if (process.env.NODE_ENV === "production" || process.env.ALLOW_DEMO_SEED !== "true") {
+    throw new Error("Demo seeding is disabled. Set ALLOW_DEMO_SEED=true in a non-production environment.");
+  }
 
-  console.log('🌱 Seeding demo database...');
+  const password = await bcrypt.hash("password123", 12);
 
-  const passwordHash = await bcrypt.hash('password123', 10);
+  await prisma.$transaction(async (tx) => {
+    const admin = await tx.user.upsert({
+      where: { email: "admin@portal.com" },
+      update: {},
+      create: { email: "admin@portal.com", password, role: "ADMIN" },
+    });
 
-  // 1. Admin
-  const adminUser = {
-    id: data.nextIds.users++,
-    email: 'admin@portal.com',
-    password: passwordHash,
-    role: 'ADMIN' as const,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
-  data.users.push(adminUser);
+    const techUser = await tx.user.upsert({
+      where: { email: "hr@techcorp.com" },
+      update: {},
+      create: { email: "hr@techcorp.com", password, role: "COMPANY" },
+    });
+    const tech = await tx.company.upsert({
+      where: { userId: techUser.id },
+      update: {},
+      create: { userId: techUser.id, name: "TechCorp Solutions", description: "Cloud intelligence and web applications firm.", website: "https://techcorp-demo.com" },
+    });
 
-  // 2. Companies
-  const techCorpUser = {
-    id: data.nextIds.users++,
-    email: 'hr@techcorp.com',
-    password: passwordHash,
-    role: 'COMPANY' as const,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
-  data.users.push(techCorpUser);
-  const techCorp = {
-    id: data.nextIds.companies++,
-    userId: techCorpUser.id,
-    name: 'TechCorp Solutions',
-    description: 'Leading global cloud intelligence & web applications firm.',
-    website: 'https://techcorp-demo.com'
-  };
-  data.companies.push(techCorp);
+    const designUser = await tx.user.upsert({
+      where: { email: "careers@innovatestudio.io" },
+      update: {},
+      create: { email: "careers@innovatestudio.io", password, role: "COMPANY" },
+    });
+    const design = await tx.company.upsert({
+      where: { userId: designUser.id },
+      update: {},
+      create: { userId: designUser.id, name: "Innovate Design Studio", description: "A design agency building digital products.", website: "https://innovatestudio.io" },
+    });
 
-  const designStudioUser = {
-    id: data.nextIds.users++,
-    email: 'careers@innovatestudio.io',
-    password: passwordHash,
-    role: 'COMPANY' as const,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
-  data.users.push(designStudioUser);
-  const designStudio = {
-    id: data.nextIds.companies++,
-    userId: designStudioUser.id,
-    name: 'Innovate Design Studio',
-    description: 'A modern design agency building delightful digital products.',
-    website: 'https://innovatestudio.io'
-  };
-  data.companies.push(designStudio);
+    const studentUser = await tx.user.upsert({
+      where: { email: "alex@student.edu" },
+      update: {},
+      create: { email: "alex@student.edu", password, role: "STUDENT" },
+    });
+    const student = await tx.student.upsert({
+      where: { userId: studentUser.id },
+      update: {},
+      create: { userId: studentUser.id, name: "Alex Johnson", bio: "Computer Science student interested in React and TypeScript.", skills: ["React", "TypeScript", "Problem Solving"] },
+    });
 
-  // 3. Students
-  const studentUser1 = {
-    id: data.nextIds.users++,
-    email: 'alex@student.edu',
-    password: passwordHash,
-    role: 'STUDENT' as const,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  };
-  data.users.push(studentUser1);
-  const student1 = {
-    id: data.nextIds.students++,
-    userId: studentUser1.id,
-    name: 'Alex Johnson',
-    bio: 'Computer Science sophomore passionate about React, TypeScript, and Full-Stack apps.',
-    resumePath: null
-  };
-  data.students.push(student1);
+    const jobs = [
+      { companyId: tech.id, title: "Frontend Engineering Intern", description: "Build React and Next.js dashboards with an experienced web team.", location: "Remote / Hybrid", type: "INTERNSHIP" },
+      { companyId: tech.id, title: "Junior Backend Developer", description: "Work with Node.js, Express, REST APIs, and modern databases.", location: "New York, NY", type: "FULL_TIME" },
+      { companyId: design.id, title: "UI/UX Design Intern", description: "Contribute to user research and modern web product design.", location: "Remote", type: "INTERNSHIP" },
+    ];
 
-  // 4. Jobs
-  const job1 = {
-    id: data.nextIds.jobs++,
-    companyId: techCorp.id,
-    title: 'Frontend Engineering Intern',
-    description: 'Join our UI/UX and web team to build reactive user dashboards using React and Next.js. Mentorship and real project shipping guaranteed!',
-    location: 'Remote / Hybrid',
-    type: 'INTERNSHIP',
-    postedAt: new Date(Date.now() - 86400000 * 2).toISOString()
-  };
+    for (const job of jobs) {
+      const exists = await tx.job.findFirst({ where: { companyId: job.companyId, title: job.title } });
+      if (!exists) await tx.job.create({ data: job });
+    }
 
-  const job2 = {
-    id: data.nextIds.jobs++,
-    companyId: techCorp.id,
-    title: 'Junior Backend Developer',
-    description: 'Work with Node.js, Express, REST APIs, and modern databases. Strong foundation in asynchronous JavaScript and basic data structures preferred.',
-    location: 'New York, NY',
-    type: 'FULL_TIME',
-    postedAt: new Date(Date.now() - 86400000 * 1).toISOString()
-  };
+    const firstJob = await tx.job.findFirst({ where: { companyId: tech.id, title: "Frontend Engineering Intern" } });
+    if (firstJob) {
+      await tx.application.upsert({
+        where: { studentId_jobId: { studentId: student.id, jobId: firstJob.id } },
+        update: {},
+        create: { studentId: student.id, jobId: firstJob.id },
+      });
+    }
 
-  const job3 = {
-    id: data.nextIds.jobs++,
-    companyId: designStudio.id,
-    title: 'UI/UX Design Intern',
-    description: 'Looking for a creative student who loves Figma, user research, and prototyping modern web interfaces.',
-    location: 'Remote',
-    type: 'INTERNSHIP',
-    postedAt: new Date().toISOString()
-  };
-
-  data.jobs.push(job1, job2, job3);
-
-  // 5. Initial Application
-  data.applications.push({
-    id: data.nextIds.applications++,
-    studentId: student1.id,
-    jobId: job1.id,
-    status: 'APPLIED',
-    appliedAt: new Date().toISOString()
+    // Use the admin reference to make the idempotent seed intent explicit.
+    void admin;
   });
-
-  dbInstance.save();
-  console.log('✅ Demo database seeded with admin, companies, jobs, and student accounts!');
 }

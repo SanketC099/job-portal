@@ -1,48 +1,42 @@
-import jwt, { Secret, SignOptions } from "jsonwebtoken";
-import dotenv from "dotenv";
+import jwt, { SignOptions } from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 
-dotenv.config();
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (secret && secret.length >= 32) return secret;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("JWT_SECRET must be configured with at least 32 characters in production.");
+  }
+  return secret || "local-development-only-secret-change-before-production";
+}
 
-const JWT_SECRET: Secret = process.env.JWT_SECRET || "supersecretdevkey";
+export const generateToken = (payload: object, expiresIn: SignOptions["expiresIn"] = "2d"): string =>
+  jwt.sign(payload, getJwtSecret(), { expiresIn, algorithm: "HS256" });
 
-export const generateToken = (payload: object, expiresIn: string = "2d"): string => {
-  const options: SignOptions = { expiresIn: expiresIn as any };
-  return jwt.sign(payload, JWT_SECRET, options);
-};
+function verifyToken(token: string): object {
+  return jwt.verify(token, getJwtSecret(), { algorithms: ["HS256"] }) as object;
+}
 
-/**
- * Middleware: requires a valid JWT in the Authorization header.
- * Populates req.auth with the decoded payload { userId, role }.
- */
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
   const header = req.headers.authorization;
-  if (!header || !header.startsWith("Bearer ")) {
+  if (!header?.startsWith("Bearer ")) {
     return res.status(401).json({ error: "Authentication required" });
   }
-  const token = header.split(" ")[1];
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    (req as any).auth = decoded;
-    next();
+    (req as any).auth = verifyToken(header.slice("Bearer ".length));
+    return next();
   } catch {
     return res.status(401).json({ error: "Invalid or expired token" });
   }
 };
 
-/**
- * Middleware: same as authenticate but does NOT reject unauthenticated requests.
- * If a valid token is present, req.auth is set. Otherwise req.auth stays undefined.
- */
-export const optionalAuth = (req: Request, res: Response, next: NextFunction) => {
+export const optionalAuth = (req: Request, _res: Response, next: NextFunction) => {
   const header = req.headers.authorization;
-  if (header && header.startsWith("Bearer ")) {
-    const token = header.split(" ")[1];
+  if (header?.startsWith("Bearer ")) {
     try {
-      const decoded = jwt.verify(token, JWT_SECRET);
-      (req as any).auth = decoded;
+      (req as any).auth = verifyToken(header.slice("Bearer ".length));
     } catch {
-      // ignore invalid token for optional auth
+      // Invalid optional tokens do not block public job browsing.
     }
   }
   next();

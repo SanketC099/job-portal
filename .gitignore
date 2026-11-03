@@ -8,6 +8,7 @@ backend/node_modules/
 # Next.js & Build outputs
 .next/
 frontend/.next/
+.vercel/
 out/
 dist/
 build/

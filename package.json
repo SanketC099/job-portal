@@ -8,21 +8,26 @@
   ],
   "scripts": {
     "build": "npm run build --workspace=frontend",
+    "build:backend": "npm run build --workspace=backend",
     "dev": "concurrently \"npm run dev --workspace=frontend\" \"npm run dev --workspace=backend\"",
-    "setup": "npm install && npm run prisma:migrate && npm run prisma:seed",
+    "setup": "npm install",
     "prisma:migrate": "npm run prisma:migrate --workspace=backend",
+    "prisma:import-json": "npm run prisma:import-json --workspace=backend",
     "prisma:seed": "npm run prisma:seed --workspace=backend"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
-    "prisma": "^5.13.0"
+    "prisma": "^5.22.0"
   },
   "allowScripts": {
     "@prisma/client@5.22.0": true,
-    "bcrypt@5.1.1": true,
+    "bcrypt@6.0.0": true,
     "unrs-resolver@1.12.2": true,
-    "prisma@5.13.0": true,
-    "@prisma/engines@5.13.0": true
+    "prisma@5.22.0": true,
+    "@prisma/engines@5.22.0": true
+  },
+  "engines": {
+    "node": ">=20.9.0"
   },
   "dependencies": {
     "lowdb": "^7.0.1"

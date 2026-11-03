@@ -5,6 +5,19 @@ import { authenticate } from "../middleware/auth";
 
 const router = Router();
 
+function serializeApplicantApplication(application: any) {
+  if (!application?.student) return application;
+  const { user, ...student } = application.student;
+  return {
+    ...application,
+    student: {
+      ...student,
+      email: user?.email,
+      resumeUrl: `/api/students/${student.id}/resume`,
+    },
+  };
+}
+
 // Student applies to a job (protected, role STUDENT)
 router.post('/jobs/:jobId/apply', authenticate, async (req: Request, res: Response) => {
   const userId = (req as any).auth?.userId;
@@ -77,14 +90,14 @@ router.get('/company', authenticate, async (req: Request, res: Response) => {
   }
 
   const apps = await prisma.application.findMany({
-    where: { jobIdIn: targetJobIds },
+    where: { jobId: { in: targetJobIds } },
     include: {
-      student: true,
+      student: { include: { user: { select: { email: true } } } },
       job: true,
     },
   });
 
-  res.json(apps);
+  res.json(apps.map(serializeApplicantApplication));
 });
 
 // Company views applications for a specific job posting
@@ -103,11 +116,11 @@ router.get('/jobs/:jobId', authenticate, async (req: Request, res: Response) => 
   const apps = await prisma.application.findMany({
     where: { jobId },
     include: {
-      student: true,
+      student: { include: { user: { select: { email: true } } } },
       job: true,
     },
   });
-  res.json(apps);
+  res.json(apps.map(serializeApplicantApplication));
 });
 
 // Core status update function with role verification, ownership checks, and duplicate prevention
@@ -134,7 +147,7 @@ async function handleStatusUpdate(req: Request, res: Response, appId: number, ta
 
   const application = await prisma.application.findUnique({
     where: { id: appId },
-    include: { job: true, student: true }
+    include: { job: true, student: { include: { user: { select: { email: true } } } } }
   });
 
   if (!application) {
@@ -175,13 +188,13 @@ async function handleStatusUpdate(req: Request, res: Response, appId: number, ta
 
   const refreshedApp = await prisma.application.findUnique({
     where: { id: appId },
-    include: { job: true, student: true }
+    include: { job: true, student: { include: { user: { select: { email: true } } } } }
   });
 
   return res.json({
     success: true,
     message: `Application successfully marked as ${status}.`,
-    application: refreshedApp || updated,
+    application: serializeApplicantApplication(refreshedApp || updated),
   });
 }
 

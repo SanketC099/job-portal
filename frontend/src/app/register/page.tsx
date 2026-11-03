@@ -21,8 +21,8 @@ export default function RegisterPage() {
       setError("Please fill in all required fields.");
       return;
     }
-    if (form.password.length < 6) {
-      setError("Password must be at least 6 characters.");
+    if (form.password.length < 10 || form.password.length > 72) {
+      setError("Password must be between 10 and 72 characters.");
       return;
     }
     if (form.password !== form.confirmPassword) {
@@ -108,6 +108,8 @@ export default function RegisterPage() {
           <input
             type="password"
             value={form.password}
+            minLength={10}
+            maxLength={72}
             onChange={(e) => update("password", e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
             placeholder="••••••••"
@@ -119,6 +121,8 @@ export default function RegisterPage() {
           <input
             type="password"
             value={form.confirmPassword}
+            minLength={10}
+            maxLength={72}
             onChange={(e) => update("confirmPassword", e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
             placeholder="••••••••"
